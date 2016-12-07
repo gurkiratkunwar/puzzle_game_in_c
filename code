@@ -1,0 +1,214 @@
+#include<windows.h> //  header file for gotoxy
+ #include <stdio.h>
+ #include<time.h>
+
+  COORD coord={0,0}; // this is global variable
+                                    //center of axis is set to the top left cornor of the screen
+ void gotoxy(float x,float y)
+ {
+   coord.X=x;
+ coord.Y=y;
+ SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
+ }
+ int display(int array[][4])
+ {
+     int a,b,i=0;
+   for ( b = 0; b < 4; b++)
+            for ( a = 0; a < 4; a++)// print array
+        {
+            if(array[b][a]==16  )
+            {
+                gotoxy((a*5)+26,(b*3)+15);
+                printf("  ");
+            }
+            else{
+            gotoxy((a*5)+26,(b*3)+15);
+            printf("%d",array[b][a]);
+            i++;
+                }
+        }
+        return 0;
+ }
+ void swapup(int *a,int *b,int array[][4])
+ {int temp=0;
+ if(*b>=1)
+ {
+temp=array[*b][*a];
+array[*b][*a]=array[*b-1][*a];
+array[*b-1][*a]=temp;
+*a=*a;
+*b=*b-1;
+ }
+if(*b>=0)
+display(array);
+ }
+void swapdown(int *a,int *b,int array[][4])
+ {int temp=0;
+ if(*b<=2)
+ {
+temp=array[*b][*a];
+array[*b][*a]=array[*b+1][*a];
+array[*b+1][*a]=temp;
+*a=*a;
+*b=*b+1;
+ }
+if(*b<4)
+display(array);
+
+ }
+ void swapleft(int *a,int *b,int array[][4])
+ {int temp=0;
+ if(*a>=1)
+ {
+temp=array[*b][*a];
+array[*b][*a]=array[*b][*a-1];
+array[*b][*a-1]=temp;
+*a=*a-1;
+*b=*b;
+ }
+if(*a>=0)
+display(array);
+
+ }
+ void swapright(int *a,int *b,int array[][4])
+ {int temp=0;
+ if(*a<=2)
+ {
+temp=array[*b][*a];
+array[*b][*a]=array[*b][*a+1];
+array[*b][*a+1]=temp;
+*a=*a+1;
+*b=*b;
+ }
+if(*a<4)
+display(array);
+
+ }
+
+
+ void check (int array[][4])
+ {
+int a,b;
+
+     int i=1,k=1;
+	for ( b = 0; b < 4; b++)
+            for ( a = 0; a < 4; a++)          //fill array
+    {
+    if(array[b][a]==i++)
+         k++;
+    }
+    if(k==15)
+        printf("game finish ");
+ }
+
+  int main()
+{
+    int a,b,array[4][4];
+
+    for(b=3;b<16;b++)
+    {
+        for(a=0;a<21;a++)
+            {
+
+            if(a%5==0)
+            {
+               if(b!=15 && a!=0 && a!=20)
+                {
+                gotoxy(a+24,b+10);
+                printf("%c",194);
+               }
+               else if(b!=3 && a!=0 && a!=20)
+               {
+                gotoxy(a+24,b+10);
+                printf("%c",193);
+               }
+
+                if(b!=3 && b!=15)
+                {
+                    gotoxy(a+24,b+10);
+                    printf("%c",179);
+                }
+            }
+            else if(b%3==0)
+            {
+                gotoxy(a+24,b+10);
+                printf("%c",196);}
+            }
+    }
+
+
+    gotoxy(44,13);
+	printf("%c",191);
+	gotoxy(44,25);
+	printf("%c",217);
+	gotoxy(24,13);
+	printf("%c",218);
+	gotoxy(24,25);
+	printf("%c",192);
+int i=1;
+	for ( b = 0; b < 4; b++)
+            for ( a = 0; a < 4; a++)          //fill array
+    {
+    array[b][a]=i++;
+    }
+
+    for ( b = 0; b < 4; b++)
+            for ( a = 0; a < 4; a++)     // shuffle array
+        {
+    int temp = array[b][a];
+    int randomIndex1 = rand() % 4;
+    int randomIndex2 = rand() % 4;
+    array[b][a]          = array[randomIndex1][randomIndex2];
+    array[randomIndex1][randomIndex2] = temp;
+                    }
+array[3][2]=13;
+array[3][3]=16;
+ display(array);
+b=3;
+a=3;
+while(1)
+{
+    if(GetAsyncKeyState(VK_UP))
+    {
+        if(b>=0)
+        swapup(&a,&b,array);
+        else
+            b=0;
+        Sleep(300);
+
+    }
+
+    if(GetAsyncKeyState(VK_DOWN))
+    {if(b<=3)
+        swapdown(&a,&b,array);
+        else
+            b=3;
+        Sleep(300);
+
+
+    }
+    if(GetAsyncKeyState(VK_LEFT))
+    { if(a>=0)
+        swapleft(&a,&b,array);
+        else
+            a=0;
+        Sleep(300);
+
+
+    }
+    if(GetAsyncKeyState(VK_RIGHT))
+    { if(a<=3)
+        swapright(&a,&b,array);
+        else
+            a=3;
+        Sleep(300);
+
+
+    }
+    check(array);
+}
+    gotoxy(0,0);
+    printf("game");
+
+     return 0;
+  }
